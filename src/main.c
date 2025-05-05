@@ -11,41 +11,62 @@ ssd1306_t display;
 
 #define SDA_PIN 14
 #define SCL_PIN 15
+#define DISPLAY_FREQUENCY 400000 // 400 kHz
 #define DISPLAY_ADDRESS 0x3c
 
-void setup()
-{
-    stdio_init_all();
+#define ADC_TEMP_CHANNEL 4
+#define ADC_VREF 3.3f
+#define ADC_RESOLUTION 4096.0f // 12-bit resolution
 
-    // Initialize I2C
-    uint freq = 400 * 1000; // 400 Khz
-    i2c_init(i2c1, freq);
+void i2c_setup()
+{
+
+    i2c_init(i2c1, DISPLAY_FREQUENCY);
     gpio_set_function(SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(SCL_PIN, GPIO_FUNC_I2C);
     gpio_pull_up(SDA_PIN);
     gpio_pull_up(SCL_PIN);
+}
 
-    // Initialize I2C
+void init_display()
+{
+    i2c_setup();
     ssd1306_init(&display, SCREEN_WIDTH, SCREEN_HEIGHT, DISPLAY_ADDRESS, i2c1);
+}
 
-    // Initialize ADC
-    adc_init();
+float voltage_to_temperature(float voltage)
+{
+    // acccording to the datasheet, the temperature is calculated as:
+    float temperature = 27.0f - (voltage - 0.706f) / 0.001721f;
+    return temperature;
+}
+
+float convert_to_celsius(float temperature_fahrenheit)
+{
+    return (temperature_fahrenheit - 32) * 5.0f / 9.0f;
 }
 
 float read_temperature()
 {
-    adc_select_input(4);
-    float conversion_factor = 3.3f / (1 << 12); // 12-bit ADC
+    adc_select_input(ADC_TEMP_CHANNEL);
+    float conversion_factor = ADC_VREF / ADC_RESOLUTION;
     uint16_t raw = adc_read();
+
     float voltage = raw * conversion_factor;
-    float temperature = 27.0f - (voltage - 0.706f) / 0.001721f;
-    float temperature_converted = (temperature - 32) * 5.0f / 9.0f; // Convert to Celsius
+    float temperature = voltage_to_temperature(voltage);
+    float temperature_converted = convert_to_celsius(temperature);
     return temperature_converted;
+}
+
+void setup()
+{
+    stdio_init_all();
+    init_display();
+    adc_init();
 }
 
 int main()
 {
-
     setup();
 
     while (true)

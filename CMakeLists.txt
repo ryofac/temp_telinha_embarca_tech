@@ -34,8 +34,10 @@ project(temp_telinha C CXX ASM)
 pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
-
-add_executable(temp_telinha main.c ssd1306.c)
+add_executable(temp_telinha
+    src/main.c
+    external/ssd1306/ssd1306.c
+)
 
 pico_set_program_name(temp_telinha "temp_telinha")
 pico_set_program_version(temp_telinha "0.1")
@@ -52,13 +54,13 @@ target_link_libraries(temp_telinha
 # Add the standard include files to the build
 target_include_directories(temp_telinha PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/external/ssd1306
 )
 
 # Add any user requested libraries
 target_link_libraries(temp_telinha
     hardware_i2c
     hardware_adc
-
 )
 
 pico_add_extra_outputs(temp_telinha)
