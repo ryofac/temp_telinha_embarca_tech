@@ -19,7 +19,7 @@ set(sdkVersion 2.1.1)
 set(toolchainVersion 14_2_Rel1)
 set(picotoolVersion 2.1.1)
 set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
-if (EXISTS ${picoVscode})
+if(EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
@@ -35,7 +35,7 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(temp_telinha main.c )
+add_executable(temp_telinha main.c ssd1306.c)
 
 pico_set_program_name(temp_telinha "temp_telinha")
 pico_set_program_version(temp_telinha "0.1")
@@ -46,18 +46,19 @@ pico_enable_stdio_usb(temp_telinha 1)
 
 # Add the standard library to the build
 target_link_libraries(temp_telinha
-        pico_stdlib)
+    pico_stdlib
+)
 
 # Add the standard include files to the build
 target_include_directories(temp_telinha PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}
 )
 
 # Add any user requested libraries
-target_link_libraries(temp_telinha 
-        hardware_i2c
-        
-        )
+target_link_libraries(temp_telinha
+    hardware_i2c
+    hardware_adc
+
+)
 
 pico_add_extra_outputs(temp_telinha)
-
