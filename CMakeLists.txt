@@ -37,7 +37,11 @@ pico_sdk_init()
 add_executable(temp_telinha
     src/main.c
     external/ssd1306/ssd1306.c
+    src/drivers/display.c
+    src/drivers/temp.c
 )
+
+# TODO: Mostrar BLOB como alternativa a esse add_executable infinito
 
 pico_set_program_name(temp_telinha "temp_telinha")
 pico_set_program_version(temp_telinha "0.1")
@@ -54,6 +58,7 @@ target_link_libraries(temp_telinha
 # Add the standard include files to the build
 target_include_directories(temp_telinha PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
+    ${CMAKE_CURRENT_LIST_DIR}/src/drivers
     ${CMAKE_CURRENT_LIST_DIR}/external/ssd1306
 )
 
@@ -64,3 +69,4 @@ target_link_libraries(temp_telinha
 )
 
 pico_add_extra_outputs(temp_telinha)
+
