@@ -33,12 +33,15 @@ project(temp_telinha C CXX ASM)
 # Initialise the Raspberry Pi Pico SDK
 pico_sdk_init()
 
+file(GLOB_RECURSE SSD1306_FILES external/ssd1306/*.c)
+file(GLOB_RECURSE SRC_FILES src/*.c)
+file(GLOB_RECURSE DRIVERS_FILES src/drivers/*.c)
+
 # Add executable. Default name is the project name, version 0.1
 add_executable(temp_telinha
-    src/main.c
-    external/ssd1306/ssd1306.c
-    src/drivers/display.c
-    src/drivers/temp.c
+    ${SRC_FILES}
+    ${DRIVERS_FILES}
+    ${SSD1306_FILES}
 )
 
 # TODO: Mostrar BLOB como alternativa a esse add_executable infinito
