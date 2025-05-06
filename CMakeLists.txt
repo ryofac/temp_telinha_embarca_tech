@@ -65,10 +65,24 @@ target_include_directories(temp_telinha PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}/external/ssd1306
 )
 
+
+# EXTRA: FETCH CONTENT
+include(FetchContent)
+
+# Incluindo bibliotecas externas no momento do build
+FetchContent_Declare(
+    ws2812b_animation
+    GIT_REPOSITORY https://github.com/TuriSc/RP2040-WS2812B-Animation.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(ws2812b_animation)
+
 # Add any user requested libraries
 target_link_libraries(temp_telinha
     hardware_i2c
     hardware_adc
+
+    ws2812b_animation
 )
 
 pico_add_extra_outputs(temp_telinha)
